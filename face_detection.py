@@ -1,33 +1,67 @@
 import cv2
 import numpy as np
-import random
-import matplotlib.pyplot as plt
 
-
-# src: https://stackoverflow.com/questions/66309089/replacing-cv2-face-detection-photo-with-overlayed-image
 def upload_files():
-   
-    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-    eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
+    # Load Haar cascade classifiers for face detection
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')  # Optional: Use for eye detection
 
-    img = cv2.imread('face.jpg')
-    img_to_place = cv2.imread('img.png')
+    # Load the input image and convert to grayscale
+    img = cv2.imread('Input/1 (1).jpeg')
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    gray_to_place = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    
-    img_h, img_w = gray.shape
-    img_to_place_h, img_to_place_w = gray_to_place.shape
+    # Detect faces in the input image
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
 
-    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-    for (x,y,w,h) in faces:
-        roi_gray = gray[y:y+h, x:x+w]
-        roi_color = img[y:y+h, x:x+w]
-        eyes = eye_cascade.detectMultiScale(roi_gray)
-        for (ex,ey,ew,eh) in eyes:
-            resized_img = cv2.resize(img_to_place, (eh, ew), interpolation = cv2.INTER_AREA)
-            resized_img_h, resized_img_w, _ = resized_img.shape
+    # Load the overlay image (black mask with white background)
+    face_overlay = cv2.imread('Input/Comiccon_Decals_Square_for_Shopify-42.webp')
 
-            roi_color[ey:ey+resized_img_h, ex:ex+resized_img_w, :] = resized_img
+    # Convert the overlay to grayscale and create a binary mask
+    overlay_gray = cv2.cvtColor(face_overlay, cv2.COLOR_BGR2GRAY)
+    _, binary_mask = cv2.threshold(overlay_gray, 128, 255, cv2.THRESH_BINARY_INV)
 
-    cv2.imwrite('out.png', img)
+    if len(faces) > 0:
+        # Use the first detected face only
+        (x, y, w, h) = faces[0]
+
+        # Dynamically adjust the overlay mask size based on the detected face
+        overlay_width = int(w * 1.5) 
+        overlay_height = int(h * 2.0) 
+        overlay_resized = cv2.resize(face_overlay, (overlay_width, overlay_height))
+        binary_mask_resized = cv2.resize(binary_mask, (overlay_width, overlay_height))
+
+        # Estimate the eyes' positions in the face bounding box
+        eye_y_position = int(y) # assuming the eyes are at the very top of the bounding box
+        mask_eye_y_position = int(overlay_height * 0.35)  # Assume the mask's eyes are similarly positioned
+
+        # Center the mask based on the estimated eye position
+        overlay_x = x + w // 2 - overlay_width // 2
+        overlay_y = eye_y_position - mask_eye_y_position
+
+        # Ensure overlay fits within image boundaries
+        img_h, img_w = img.shape[:2]
+        if overlay_x < 0:
+            binary_mask_resized = binary_mask_resized[:, -overlay_x:]
+            overlay_resized = overlay_resized[:, -overlay_x:]
+            overlay_x = 0
+        if overlay_y < 0:
+            binary_mask_resized = binary_mask_resized[-overlay_y:, :]
+            overlay_resized = overlay_resized[-overlay_y:, :]
+            overlay_y = 0
+        if overlay_x + overlay_resized.shape[1] > img_w:
+            binary_mask_resized = binary_mask_resized[:, :img_w - overlay_x]
+            overlay_resized = overlay_resized[:, :img_w - overlay_x]
+        if overlay_y + overlay_resized.shape[0] > img_h:
+            binary_mask_resized = binary_mask_resized[:img_h - overlay_y, :]
+            overlay_resized = overlay_resized[:img_h - overlay_y, :]
+
+        # Perform overlay using the binary mask
+        for c in range(0, 3):  # Apply to each BGR channel
+            img[overlay_y:overlay_y + overlay_resized.shape[0], overlay_x:overlay_x + overlay_resized.shape[1], c] = \
+                np.where(binary_mask_resized > 0, overlay_resized[:, :, c], img[overlay_y:overlay_y + overlay_resized.shape[0], overlay_x:overlay_x + overlay_resized.shape[1], c])
+
+    # Save the final image
+    cv2.imwrite("out.png", img)
+    print("Output image saved as 'out.png'.")
+
+upload_files()
