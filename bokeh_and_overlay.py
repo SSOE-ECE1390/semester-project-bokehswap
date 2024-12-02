@@ -65,7 +65,7 @@ def bokeh_bg(face_path, icon_path, background_path, bokeh_selector=1, bokeh_effe
         plt.title("Resized Icon (for Bokeh Effect)")
         plt.show()
         
-    background_with_bokeh = bokeh.bokeh_blur(background, kernel, cv2.cvtColor(background, cv2.COLOR_BGR2GRAY))
+    background_with_bokeh = bokeh.bokeh_blur(background, kernel)
     plt.imshow(cv2.cvtColor(background_with_bokeh, cv2.COLOR_BGR2RGB))
     plt.title("Bokeh Background")
     plt.show()
