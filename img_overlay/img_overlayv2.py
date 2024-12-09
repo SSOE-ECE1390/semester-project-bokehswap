@@ -66,7 +66,7 @@ def img_overlay(image, icon_path, icon_mask_path=os.path.abspath("Output/Separat
                 np.where(binary_mask_resized > 0, overlay_resized[:, :, c], img[overlay_y:overlay_y + overlay_resized.shape[0], overlay_x:overlay_x + overlay_resized.shape[1], c])
 
     # Apply image enhancement
-    enhanced_img = img_enhance.random_adjust_brightness(img)
+    # enhanced_img = img_enhance.random_adjust_brightness(img)
 
     # # Save the final image
     # plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
@@ -76,6 +76,7 @@ def img_overlay(image, icon_path, icon_mask_path=os.path.abspath("Output/Separat
     output_path = os.path.abspath(f"Output/Overlay/{output_path}.jpeg")
     cv2.imwrite(output_path, img)
     print("Output image saved as 'test.jpeg'.")
+    return img
 
 # # example usage
 # face_path = os.path.abspath("Input/Face/1 (1).jpeg")

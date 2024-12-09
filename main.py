@@ -10,6 +10,7 @@ import cv2
 from bokeh_and_overlay import bokeh_bg
 from img_segmentation import icon_segmentation
 from img_segmentation import person_segmentation
+from extra_features import img_enhance
 from img_overlay import img_overlayv2
 from bokeh_effect import bokeh
 from extra_features import resize
@@ -229,7 +230,7 @@ class AlternativeGui(QMainWindow):
             self.output_path = os.path.relpath("Output/Overlay/processed_image.jpeg")
             icon_mask = icon_segmentation.segment_iconv2(self.icon_image_path)
             bokeh_background = bokeh_bg(self.input_image_path, self.icon_image_path, self.background_image_path, bokeh_selector=0)
-            result = img_overlayv2.img_overlay(bokeh_background, self.icon_image_path, output_path="processed_image")
+            self.result = img_overlayv2.img_overlay(bokeh_background, self.icon_image_path, output_path="processed_image")
             try:
                 self.output_label.setPixmap(QPixmap(self.output_path).scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
             except:
@@ -239,6 +240,7 @@ class AlternativeGui(QMainWindow):
         try:
             if not self.output_path:
                 return
+            enhanced_img = img_enhance.random_adjust_brightness(self.result)
             original_path = os.path.relpath("Output/Overlay/processed_image.jpeg")
             enhanced_path = os.path.relpath("Output/randomly_enhanced_img.jpeg")
             if checked:
