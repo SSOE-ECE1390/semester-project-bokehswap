@@ -29,7 +29,7 @@ class BokehGUI(QMainWindow):
         self.setWindowTitle("Bokeh Swap")
         self.setWindowIcon(QtGui.QIcon('Input/Icon/app_logo.png'))
         # self.setGeometry(100, 100, 800, 600)
-        self.setFixedSize(1200, 900)
+        self.resize(1200, 900)
 
         main_layout = QVBoxLayout()
         image_layout = QHBoxLayout()
