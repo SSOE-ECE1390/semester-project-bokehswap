@@ -14,5 +14,5 @@ def random_adjust_brightness(img):
     matrix = np.ones(img.shape, dtype="int16") * val
 
     new_img = np.clip(cv2.add(img, matrix), 0, 255).astype("uint8")
-    plt.imsave("Output/randomly_enhanced_img.png", new_img)
+    cv2.imwrite("Output/randomly_enhanced_img.jpeg", new_img)
     return new_img
