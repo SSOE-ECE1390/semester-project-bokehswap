@@ -1,12 +1,12 @@
 import sys
 import time
 import mediapipe as mp
-from PyQt6.QtWidgets import (
+from PyQt5.QtWidgets import (
     QApplication, QSplashScreen, QMainWindow, QLabel, QPushButton, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout
 )
-from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt, QTimer
-from PyQt6 import QtGui
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5 import QtGui
 import os
 import cv2
 from bokeh_and_overlay import bokeh_bg
@@ -29,7 +29,7 @@ class BokehGUI(QMainWindow):
         self.setWindowTitle("Bokeh Swap")
         self.setWindowIcon(QtGui.QIcon('Input/Icon/app_logo.png'))
         # self.setGeometry(100, 100, 800, 600)
-        self.setFixedSize(800, 600)
+        self.setFixedSize(1200, 900)
 
         main_layout = QVBoxLayout()
         image_layout = QHBoxLayout()
@@ -42,7 +42,7 @@ class BokehGUI(QMainWindow):
 
         for label in [self.input_label, self.icon_label, self.background_label, self.output_label]:
             label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            label.setFixedSize(200, 200)
+            label.setFixedSize(250, 250)
             label.setStyleSheet("border: 1px solid black;")
 
         image_layout.addWidget(self.input_label)
@@ -78,22 +78,22 @@ class BokehGUI(QMainWindow):
         self.background_image_path = None
 
     def upload_input_image(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select Input Image", "", "Images (*.png *.jpg *.jpeg)")
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Input Image", "Input/Face", "Images (*.png *.jpg *.jpeg)")
         if file_path:
             self.input_image_path = file_path
-            self.input_label.setPixmap(QPixmap(file_path).scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+            self.input_label.setPixmap(QPixmap(file_path).scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
     def upload_icon_image(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select Icon Image", "", "Images (*.png *.jpg *.jpeg)")
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Icon Image", "Input/Icon", "Images (*.png *.jpg *.jpeg)")
         if file_path:
             self.icon_image_path = file_path
-            self.icon_label.setPixmap(QPixmap(file_path).scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+            self.icon_label.setPixmap(QPixmap(file_path).scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
     def upload_background_image(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select Background Image", "", "Images (*.png *.jpg *.jpeg)")
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Background Image", "Input/Background", "Images (*.png *.jpg *.jpeg)")
         if file_path:
             self.background_image_path = file_path
-            self.background_label.setPixmap(QPixmap(file_path).scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+            self.background_label.setPixmap(QPixmap(file_path).scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
     def process_images(self):
         if not all([self.input_image_path, self.icon_image_path, self.background_image_path]):
@@ -104,7 +104,7 @@ class BokehGUI(QMainWindow):
         bokeh_background = bokeh_bg(self.input_image_path, self.icon_image_path, self.background_image_path, bokeh_selector=0)
         result = img_overlayv2.img_overlay(bokeh_background, self.icon_image_path, output_path="processed_image")
         try:
-            self.output_label.setPixmap(QPixmap(output_path).scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+            self.output_label.setPixmap(QPixmap(output_path).scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
         except:
             pass
 if __name__ == "__main__":

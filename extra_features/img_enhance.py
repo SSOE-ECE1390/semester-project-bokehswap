@@ -7,9 +7,7 @@ def random_adjust_brightness(img):
     img = img.astype("int16")
     print("Runnning random_adjust_brightness...")
     
-    val = 0 
-    while val == 0: # exclude 0 from possible val range
-        val = random.randrange(-255, 255, 51)
+    val = random.choice([x for x in range(-255, 256, 51) if x != 0])
     print("using random value: ", val)
     print("\n")
 
