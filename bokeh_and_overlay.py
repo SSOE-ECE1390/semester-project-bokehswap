@@ -11,47 +11,47 @@ import matplotlib.pyplot as plt
 
 def bokeh_bg(face_path, icon_path, background_path, bokeh_selector=1, bokeh_effect="star", icon_mask_path=os.path.abspath("Output/SeparateIcon/test2.jpeg"), output_path="test"):
     face = cv2.imread(face_path)
-    plt.imshow(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
-    plt.title("Face")
-    plt.show()
+    # plt.imshow(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
+    # plt.title("Face")
+    # plt.show()
 
     icon = cv2.imread(icon_path)
-    plt.imshow(cv2.cvtColor(icon, cv2.COLOR_BGR2RGB))
-    plt.title("Icon")
-    plt.show()
+    # plt.imshow(cv2.cvtColor(icon, cv2.COLOR_BGR2RGB))
+    # plt.title("Icon")
+    # plt.show()
 
     background = cv2.imread(background_path)
-    plt.imshow(cv2.cvtColor(background, cv2.COLOR_BGR2RGB))
-    plt.title("Background")
-    plt.show()
+    # plt.imshow(cv2.cvtColor(background, cv2.COLOR_BGR2RGB))
+    # plt.title("Background")
+    # plt.show()
 
     # resize background to fit face image
     background = resize.resize(background, face)
-    plt.imshow(cv2.cvtColor(background, cv2.COLOR_BGR2RGB))
-    plt.title("Resized Background")
-    plt.show()
+    # plt.imshow(cv2.cvtColor(background, cv2.COLOR_BGR2RGB))
+    # plt.title("Resized Background")
+    # plt.show()
 
     # get mask
     face_mask_gray = person_segmentation.segment_person(face_path)
     face_mask = cv2.cvtColor(face_mask_gray, cv2.COLOR_GRAY2BGR)
-    plt.imshow(face_mask)
-    plt.title("Face Mask")
-    plt.show()
+    # plt.imshow(face_mask)
+    # plt.title("Face Mask")
+    # plt.show()
 
     background_mask = cv2.bitwise_not(face_mask)
-    plt.imshow(background_mask)
-    plt.title("Background Mask")
-    plt.show()
+    # plt.imshow(background_mask)
+    # plt.title("Background Mask")
+    # plt.show()
 
     icon_mask = cv2.bitwise_not(cv2.imread(icon_mask_path))
-    plt.imshow(icon_mask)
-    plt.title("Icon Mask")
-    plt.show()
+    # plt.imshow(icon_mask)
+    # plt.title("Icon Mask")
+    # plt.show()
 
     icon = cv2.bitwise_and(icon_mask, icon)
-    plt.imshow(cv2.cvtColor(icon, cv2.COLOR_BGR2RGB))
-    plt.title("Masked Icon")
-    plt.show()
+    # plt.imshow(cv2.cvtColor(icon, cv2.COLOR_BGR2RGB))
+    # plt.title("Masked Icon")
+    # plt.show()
 
     if bokeh_selector == 1:
         kernel_name = bokeh_effect
@@ -61,21 +61,21 @@ def bokeh_bg(face_path, icon_path, background_path, bokeh_selector=1, bokeh_effe
         target_height, target_width = face.shape[:2]
         resized_icon = cv2.resize(icon_mask, (int(target_height*.10), int(target_width*0.10)))
         kernel = np.float32(resized_icon)
-        plt.imshow(resized_icon)
-        plt.title("Resized Icon (for Bokeh Effect)")
-        plt.show()
+        # plt.imshow(resized_icon)
+        # plt.title("Resized Icon (for Bokeh Effect)")
+        # plt.show()
         
     background_with_bokeh = bokeh.bokeh_blur(background, kernel)
-    plt.imshow(cv2.cvtColor(background_with_bokeh, cv2.COLOR_BGR2RGB))
-    plt.title("Bokeh Background")
-    plt.show()
+    # plt.imshow(cv2.cvtColor(background_with_bokeh, cv2.COLOR_BGR2RGB))
+    # plt.title("Bokeh Background")
+    # plt.show()
 
     just_the_face = cv2.bitwise_and(face, face_mask)
     just_the_bokeh_bg = cv2.bitwise_and(background_with_bokeh, background_mask)
     face_plus_bokeh = cv2.add(just_the_face, just_the_bokeh_bg)
-    plt.imshow(cv2.cvtColor(face_plus_bokeh, cv2.COLOR_BGR2RGB))
-    plt.title("Bokeh Background with Face")
-    plt.show()
+    # plt.imshow(cv2.cvtColor(face_plus_bokeh, cv2.COLOR_BGR2RGB))
+    # plt.title("Bokeh Background with Face")
+    # plt.show()
     return face_plus_bokeh
 
 # NOTE: for some reason, these functions cannot be put into a function and ran together...
