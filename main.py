@@ -1,10 +1,12 @@
 import sys
+import time
 import mediapipe as mp
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout
+    QApplication, QSplashScreen, QMainWindow, QLabel, QPushButton, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout
 )
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QTimer
+from PyQt6 import QtGui
 import os
 import cv2
 from bokeh_and_overlay import bokeh_bg
@@ -14,13 +16,21 @@ from img_overlay import img_overlayv2
 from bokeh_effect import bokeh
 from extra_features import resize
 
+class SplashScreen(QSplashScreen):
+    def __init__(self):
+        super().__init__()
+        
+        self.setPixmap(QPixmap('Input/Other/bokehswap_splash.png').scaled(800, 600, Qt.AspectRatioMode.KeepAspectRatio))
+        self.show()
 
 class BokehGUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Bokeh Swap")
-        self.setGeometry(100, 100, 800, 600)
-        
+        self.setWindowIcon(QtGui.QIcon('Input/Icon/app_logo.png'))
+        # self.setGeometry(100, 100, 800, 600)
+        self.setFixedSize(800, 600)
+
         main_layout = QVBoxLayout()
         image_layout = QHBoxLayout()
         button_layout = QHBoxLayout()
@@ -99,7 +109,17 @@ class BokehGUI(QMainWindow):
             pass
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
+    splash = SplashScreen()
+    
+    for i in range(1, 101):
+        time.sleep(0.02)  
+        splash.showMessage(f"Loading... {i}%", Qt.AlignBottom | Qt.AlignCenter, Qt.black)
+        QApplication.processEvents()
+
     window = BokehGUI()
     window.show()
+    splash.finish(window)
+
     sys.exit(app.exec())
 
